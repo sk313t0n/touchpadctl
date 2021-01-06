@@ -1,0 +1,42 @@
+#!/bin/bash
+# author: sk313t0n
+# disable/enable touchpad/trackpoint
+
+which xinput > /dev/null
+if [ $? = 1 ]
+then
+  echo "Please install xinput by running 'apt install xinput'"
+  exit 1
+fi
+
+USAGE="Usage: touchpadctl (enable|disable) (touchpad|trackpoint)"
+
+if [ -z "$1" ] || [ -z "$2" ]
+then
+  echo $USAGE
+  exit 1
+fi
+
+TOUCHPAD=$(LINE=$(xinput list --name-only | egrep -n -i touchpad | egrep -o "^[0-9]{1,}") && xinput list --id-only | head -n $LINE | tail -n 1)
+TRACKPOINT=$(LINE=$(xinput list --name-only | egrep -n -i trackpoint | egrep -o "^[0-9]{1,}") && xinput list --id-only | head -n $LINE | tail -n 1)
+
+if [ $2 = "touchpad" ]
+then
+  ID=$TOUCHPAD
+elif [ $2 = "trackpoint" ]
+then
+  ID=$TRACKPOINT
+else
+  echo $USAGE
+  exit 1
+fi
+if [ $1 = "enable" ]
+then
+  xinput enable $ID
+elif [ $1 = "disable" ]
+then
+  xinput disable $ID
+else
+  echo $USAGE
+  exit 1
+fi
