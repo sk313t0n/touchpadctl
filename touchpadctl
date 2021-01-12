@@ -9,7 +9,7 @@ then
   exit 1
 fi
 
-USAGE="Usage: touchpadctl (enable|disable) (touchpad|trackpoint)"
+USAGE="Usage: touchpadctl (enable|disable) (touchpad|trackpoint|both)"
 
 if [ -z "$1" ] || [ -z "$2" ]
 then
@@ -26,6 +26,10 @@ then
 elif [ $2 = "trackpoint" ]
 then
   ID=$TRACKPOINT
+elif [ $2 = "both" ]
+then
+  both=1
+  ID=$TOUCHPAD
 else
   echo $USAGE
   exit 1
@@ -33,9 +37,17 @@ fi
 if [ $1 = "enable" ]
 then
   xinput enable $ID
+  if [ $both = 1 ]
+  then
+    xinput enable $TRACKPOINT
+  fi
 elif [ $1 = "disable" ]
 then
   xinput disable $ID
+if [ $both = 1 ]
+  then
+    xinput disable $TRACKPOINT
+  fi
 else
   echo $USAGE
   exit 1
